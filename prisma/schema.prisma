@@ -1,0 +1,110 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+enum Role {
+    ADMIN
+    GUEST
+}
+
+enum ctype {
+    SECONDARY1
+    SECONDARY2
+}
+
+enum mtype {
+    MATHSCI
+    ARTMATH
+    ARTENG
+    ARTSOC //ศิลป์-สังคม
+    ARTFREE // ศิลป์-ทั่วไป
+}
+
+enum statustype {
+    W8
+    AGREE
+    REJECT
+}
+
+model Class {
+    class_id   Int       @id @default(autoincrement())
+    class_type ctype
+    student    student[]
+
+    @@map("class")
+}
+
+model major {
+    major_id   Int       @id @default(autoincrement())
+    major_type mtype
+    student    student[]
+}
+
+model student {
+    std_id       Int        @id @default(autoincrement())
+    std_name     String
+    std_lastname String
+    std_bd       DateTime   @db.Date
+    std_address  String
+    std_phone    String
+    std_email    String
+    img_profile  String
+    std_identity String
+    status       statustype @default(W8)
+    class        Class      @relation(fields: [classId], references: [class_id], onDelete: Cascade, onUpdate: Cascade)
+    classId      Int        @map("class_id")
+    major        major      @relation(fields: [majorId], references: [major_id], onDelete: Cascade, onUpdate: Cascade)
+    majorId      Int        @map("major_id")
+}
+
+// model admin {
+//     admin_id       Int     @id @default(autoincrement())
+//     admin_name     String
+//     admin_lastname String
+//     admin_phone    String?
+//     admin_address  String?
+//     admin_email    String
+//     admin_password String
+// }
+
+model info_enroll_online {
+    info_on_id     Int        @id @default(autoincrement())
+    status_on_type statustype @default(W8)
+    createAt       DateTime   @default(now())
+    updateAt       DateTime
+    user           user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+    user_id        Int
+}
+
+model info_enroll_offline {
+    info_off_id     Int        @id @default(autoincrement())
+    status_off_type statustype @default(W8)
+    createAt        DateTime   @default(now())
+    updateAt        DateTime
+    user            user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+    user_id         Int
+}
+
+//เป็นรหัสชั่วคราวสำหรับล็อคอินเข้าสู่ระบบของผู้ที่จะทำการสมัครเรียน
+// model account {
+//     id       Int    @id @default(autoincrement())
+//     username String
+//     password String
+// }
+
+model user {
+    user_id             Int                   @id @default(autoincrement())
+    user_name           String
+    user_lastname       String
+    user_email          String
+    user_identity       String
+    user_password       String
+    user_role           Role                  @default(GUEST)
+    info_enroll_online  info_enroll_online[]
+    info_enroll_offline info_enroll_offline[]
+}

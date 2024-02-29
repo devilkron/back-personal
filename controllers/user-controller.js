@@ -29,3 +29,13 @@ exports.register = async (req, res, next) => {
     next(err);
   }
 };
+exports.getUserById = async(req, res , next) => {
+  try {
+    const { user_id } = req.params;
+    const rs = await db.user.findFirst({
+      where:{ user_id: Number(user_id)}
+    })
+  }catch(err){
+    next(err)
+  }
+}

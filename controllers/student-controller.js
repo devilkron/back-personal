@@ -158,7 +158,7 @@ module.exports.studentCreate = async (req, res, next) => {
 
     const imageUrlArray = await Promise.all(imagePromise);
     const { classId, majorId, status } = req.body;
-    console.log("Received status:", status);
+    // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {
         ...value,
@@ -184,88 +184,3 @@ module.exports.studentCreate = async (req, res, next) => {
   }
 };
 
-//   console.log(req.body);
-//   const {
-//     identity,
-//     names,
-//     lastname,
-//     BD,
-//     address,
-//     phone,
-//     email,
-//     grade,
-//     image,
-//     imggrade,
-//     major_id,
-//     class_id,
-//   } = req.body;
-//   try {
-//     //validation
-//     if (
-//       !(
-//         identity &&
-//         names &&
-//         lastname &&
-//         BD &&
-//         address &&
-//         phone &&
-//         email &&
-//         grade &&
-//         image &&
-//         imggrade &&
-//         major_id &&
-//         class_id
-//       )
-//     ) {
-//       return next(new Error("Fulfill all inputs"));
-//     }
-
-//     const std = {
-//       std_identity: identity,
-//       std_name: names,
-//       std_lastname: lastname,
-//       std_bd: BD,
-//       std_address: address,
-//       std_phone: phone,
-//       std_email: email,
-//       std_grade: grade,
-//       img_profile: image,
-//       img_grade: imggrade,
-//       majorId: major_id,
-//       classId: class_id,
-//     };
-//     //                                db  / const db
-//     const rs = await db.$executeRaw`
-//   INSERT INTO student (
-//     std_identity,
-//     std_name,
-//     std_lastname,
-//     std_bd,
-//     std_address,
-//     std_phone,
-//     std_email,
-//     std_grade,
-//     img_profile,
-//     img_grade,
-//     major_id,
-//     class_id
-//   ) VALUES (
-//     ${identity},
-//     ${names},
-//     ${lastname},
-//     ${BD},
-//     ${address},
-//     ${phone},
-//     ${email},
-//     ${grade},
-//     ${image},
-//     ${imggrade},
-//     ${major_id},
-//     ${class_id}
-//   )`;
-//     console.log(rs);
-
-//     res.json({ message: "Register SUCCESSFUL!!!" });
-//   } catch (err) {
-//     next(err);
-//   }

@@ -98,3 +98,23 @@ exports.GETME = (req, res, next) => {
   res.json(req.user);
 };
 
+exports.updateUser = async (req, res, next) => {
+  const { user_id } = req.params;
+  const { user_name, user_lastname, user_email, user_identity } = req.body;
+  // console.log(req.body)
+  try{
+    const rs = await db.user.update({
+      data: {
+        user_name,
+        user_lastname,
+        user_email,
+        user_identity
+      },
+      where: {user_id: Number(user_id)}
+    })
+    res.json({message: "UPDATE", result: rs})
+  }catch(err){
+    next(err)
+  }
+};
+

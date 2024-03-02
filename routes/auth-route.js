@@ -7,6 +7,7 @@ router.post("/register", authController.register);
 router.post("/login", authController.login);
 router.post("/adminlogin",authController.adminlogin)
 
+router.patch("/update/:user_id", authController.updateUser)
 
 
 router.get("/me", authenticate, authController.GETME); //protect route

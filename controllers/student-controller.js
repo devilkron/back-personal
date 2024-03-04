@@ -35,10 +35,10 @@ exports.me = (req, res, next) => {
 
 exports.searchData = async (req, res, next) => {
   try {
-    const { search } = req.body;
+    const  name  = req.query.name;
     const getD = await db.student.findMany({
       where: {
-        std_name: search,
+        std_name: name,
       },
       include: {
         class: true,

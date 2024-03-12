@@ -7,8 +7,6 @@ const prisma = require("../models/db");
 const cloudUpload = require("../utils/cloudupload");
 const createError = require("../utils/createError");
 
-
-
 module.exports.getMajor = async (req, res, next) => {
   const getM = await db.major.findMany();
   res.json({ getM });
@@ -19,13 +17,21 @@ module.exports.getClass = async (req, res, next) => {
 };
 
 exports.getStudent = async (req, res, next) => {
+  let skip = req.query.skip;
+  const pageSize = 10;
+  skip = skip === -10 ? 0 : +skip;
+  // const offset = (page - 1) * pageSize;
   const getS = await db.student.findMany({
     include: {
       class: true,
       major: true,
     },
+    skip: skip,
+    take: pageSize,
   });
-  res.json({ getS });
+
+  res.json({
+    getS,});
 };
 
 exports.me = (req, res, next) => {
@@ -35,10 +41,15 @@ exports.me = (req, res, next) => {
 
 exports.searchData = async (req, res, next) => {
   try {
-    const  name  = req.query.name;
+    const name = req.query.name;
+
+    // console.log(name);
+    // const lastname = req.query.lastname;
     const getD = await db.student.findMany({
       where: {
-        std_name: name,
+        std_name: {
+          contains: name,
+        },
       },
       include: {
         class: true,
@@ -46,7 +57,7 @@ exports.searchData = async (req, res, next) => {
       },
     });
     res.json({ getD });
-    console.log(getD);
+    // console.log(getD);
   } catch (err) {
     next(err);
   }
@@ -61,9 +72,7 @@ exports.updateData = async (req, res, next) => {
     std_address,
     std_phone,
     std_email,
-    std_grade,
     img_profile,
-    img_grade,
     majorId,
     classId,
   } = req.body;
@@ -80,9 +89,7 @@ exports.updateData = async (req, res, next) => {
         std_address,
         std_phone,
         std_email,
-        std_grade,
         img_profile,
-        img_grade,
         majorId,
         classId,
       },
@@ -95,42 +102,38 @@ exports.updateData = async (req, res, next) => {
   }
 };
 
-exports.updateStatus = async(req, res, next)=> {
+exports.updateStatus = async (req, res, next) => {
   const { std_id } = req.params;
-  const {
-    status
-  } = req.body
-  try{
-const rs = await db.student.update({
-  data: {
-    status,
-  },
-  where: { std_id: Number(std_id) },
-})
-console.log(rs)
-res.json({ message: "UPDATE Status", result: rs });
-  }catch(err){
-    next(err)
+  const { status } = req.body;
+  try {
+    const rs = await db.student.update({
+      data: {
+        status,
+      },
+      where: { std_id: Number(std_id) },
+    });
+    console.log(rs);
+    res.json({ message: "UPDATE Status", result: rs });
+  } catch (err) {
+    next(err);
   }
-}
-exports.rejectStatus = async(req, res, next)=> {
+};
+exports.rejectStatus = async (req, res, next) => {
   const { std_id } = req.params;
-  const {
-    status
-  } = req.body
-  try{
-const rs = await db.student.update({
-  data: {
-    status,
-  },
-  where: { std_id: Number(std_id) },
-})
-console.log(rs)
-res.json({ message: "UPDATE Status", result: rs });
-  }catch(err){
-    next(err)
+  const { status } = req.body;
+  try {
+    const rs = await db.student.update({
+      data: {
+        status,
+      },
+      where: { std_id: Number(std_id) },
+    });
+    console.log(rs);
+    res.json({ message: "UPDATE Status", result: rs });
+  } catch (err) {
+    next(err);
   }
-}
+};
 
 exports.delData = async (req, res, next) => {
   try {
@@ -157,11 +160,16 @@ module.exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId, status } = req.body;
+    const { classId, majorId,user_id, status } = req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {
         ...value,
+        user: {
+          connect: {
+            user_id: req.user.user_id
+          },
+        },
         class: {
           connect: {
             class_id: Number(classId),
@@ -184,3 +192,21 @@ module.exports.studentCreate = async (req, res, next) => {
   }
 };
 
+exports.showSTDbyUser = async( req, res, next) => {
+  try{
+
+    const showstd = await db.student.findMany({
+      include: {
+        class: true,
+        major: true,
+      },
+      where:{
+        user_id: req.user.user_id
+      }
+
+    });
+    res.json({showstd})
+  }catch(err){
+    next(err)
+  }
+}

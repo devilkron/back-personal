@@ -60,42 +60,11 @@ model student {
     classId      Int        @map("class_id")
     major        major      @relation(fields: [majorId], references: [major_id], onDelete: Cascade, onUpdate: Cascade)
     majorId      Int        @map("major_id")
+    user         user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+    user_id      Int
 }
 
-// model admin {
-//     admin_id       Int     @id @default(autoincrement())
-//     admin_name     String
-//     admin_lastname String
-//     admin_phone    String?
-//     admin_address  String?
-//     admin_email    String
-//     admin_password String
-// }
 
-model info_enroll_online {
-    info_on_id     Int        @id @default(autoincrement())
-    status_on_type statustype @default(W8)
-    createAt       DateTime   @default(now())
-    updateAt       DateTime
-    user           user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
-    user_id        Int
-}
-
-model info_enroll_offline {
-    info_off_id     Int        @id @default(autoincrement())
-    status_off_type statustype @default(W8)
-    createAt        DateTime   @default(now())
-    updateAt        DateTime
-    user            user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
-    user_id         Int
-}
-
-//เป็นรหัสชั่วคราวสำหรับล็อคอินเข้าสู่ระบบของผู้ที่จะทำการสมัครเรียน
-// model account {
-//     id       Int    @id @default(autoincrement())
-//     username String
-//     password String
-// }
 
 model user {
     user_id             Int                   @id @default(autoincrement())
@@ -105,6 +74,5 @@ model user {
     user_identity       String
     user_password       String
     user_role           Role                  @default(GUEST)
-    info_enroll_online  info_enroll_online[]
-    info_enroll_offline info_enroll_offline[]
+    student             student[]
 }

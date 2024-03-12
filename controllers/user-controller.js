@@ -39,4 +39,36 @@ exports.getUserById = async(req, res , next) => {
     next(err)
   }
 }
+exports.showSTDbyUser = async( req, res, next) => {
+  try{
 
+    const showstd = await db.student.findMany({
+      include: {
+        class: true,
+        major: true,
+      },
+      where:{
+        user_id: req.user.user_id
+      }
+
+    });
+    res.json({showstd})
+  }catch(err){
+    next(err)
+  }
+}
+exports.showDtById = async (req,res, next )=> {
+  try{
+    
+    const {std_id} = req.params; 
+
+    const showDt = await db.student.findFirst({
+      where:{
+        std_id:+std_id,
+      }
+    })
+    res.json({showDt})
+  }catch(err){
+    next(err)
+  }
+}

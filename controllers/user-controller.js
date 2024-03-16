@@ -85,11 +85,66 @@ exports.dashGet = async (req,res,next) => {
         major: true
       }
     })
+    const dashSec1 = await db.student.findMany({
+      where: {
+        class: {
+          class_type: "SECONDARY1"
+        }
+      }
+    })
+    const dashSec2 = await db.student.findMany({
+      where: {
+        class: {
+          class_type: "SECONDARY2"
+        }
+      }
+    })
+    const dashMATHSCI = await db.student.findMany({
+      where:{
+        major: {
+          major_type: "MATHSCI"
+        }
+      }
+    })
+    const dashARTSOC= await db.student.findMany({
+      where:{
+        major: {
+          major_type: "ARTSOC"
+        }
+      }
+    })
+    const dashARTFREE = await db.student.findMany({
+      where:{
+        major: {
+          major_type: "ARTFREE"
+        }
+      }
+    })
+    const dashARTENG = await db.student.findMany({
+      where:{
+        major: {
+          major_type: "ARTENG"
+        }
+      }
+    })
+    const dashARTMATH = await db.student.findMany({
+      where:{
+        major: {
+          major_type: "ARTMATH"
+        }
+      }
+    })
+    const countMATHSCI = dashMATHSCI.length
+    const countARTMATH = dashARTMATH.length
+    const countARTENG= dashARTENG.length
+    const countARTSOC= dashARTSOC.length
+    const countARTFREE= dashARTFREE.length
+    const countClass2 = dashSec2.length
+    const countClass = dashSec1.length
     const count = dashGet.length;
-    // console.log(count)
-    res.json({count})
+    // console.log(dashGet)
+    res.json({count,countClass,countClass2,countMATHSCI,countARTENG,countARTFREE,countARTSOC,countARTMATH})
   }catch(err){
     next(err)
   }
-  
 }

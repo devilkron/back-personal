@@ -17,21 +17,27 @@ module.exports.getClass = async (req, res, next) => {
 };
 
 exports.getStudent = async (req, res, next) => {
-  let skip = req.query.skip;
-  const pageSize = 10;
-  skip = skip === -10 ? 0 : +skip;
-  // const offset = (page - 1) * pageSize;
-  const getS = await db.student.findMany({
-    include: {
-      class: true,
-      major: true,
-    },
-    skip: skip,
-    take: pageSize,
-  });
+  try {
+    let skip = req.query.skip;
+    const pageSize = 10;
+    skip = skip === -10 ? 0 : +skip;
+    
+    
+    const getS = await db.student.findMany({
+      include: {
+        class: true,
+        major: true,
+      },
+      skip: skip,
+      take: pageSize,
+    });
 
-  res.json({
-    getS,});
+    res.json({getS});
+    // console.log(skip)
+  } catch (err) {
+    next(err);
+    console.log(err);
+  }
 };
 
 exports.me = (req, res, next) => {
@@ -76,10 +82,22 @@ exports.updateData = async (req, res, next) => {
     majorId,
     classId,
   } = req.body;
-  // console.log(req.user)
-  // console.log(req.params)
-  // console.log(req.body);
+
+  // console.log(majorId);
   try {
+    const getMajor = await db.major.findFirst({
+      where: {
+        major_id: +majorId,
+      },
+    });
+    const getClass = await db.class.findFirst({
+      where: {
+        class_id: +classId,
+      },
+    });
+
+    // console.log(getMajor);
+
     const rs = await db.student.update({
       data: {
         std_identity,
@@ -90,15 +108,15 @@ exports.updateData = async (req, res, next) => {
         std_phone,
         std_email,
         img_profile,
-        majorId,
-        classId,
+        majorId: getMajor.major_id,
+        classId: getClass.class_id,
       },
       where: { std_id: Number(std_id) },
     });
-    // console.log(rs);
     res.json({ message: "UPDATE", result: rs });
   } catch (err) {
     next(err);
+    console.log(err);
   }
 };
 
@@ -160,14 +178,14 @@ module.exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId,user_id, status } = req.body;
+    const { classId, majorId, user_id, status } = req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {
         ...value,
         user: {
           connect: {
-            user_id: req.user.user_id
+            user_id: req.user.user_id,
           },
         },
         class: {
@@ -192,21 +210,19 @@ module.exports.studentCreate = async (req, res, next) => {
   }
 };
 
-exports.showSTDbyUser = async( req, res, next) => {
-  try{
-
+exports.showSTDbyUser = async (req, res, next) => {
+  try {
     const showstd = await db.student.findMany({
       include: {
         class: true,
         major: true,
       },
-      where:{
-        user_id: req.user.user_id
-      }
-
+      where: {
+        user_id: req.user.user_id,
+      },
     });
-    res.json({showstd})
-  }catch(err){
-    next(err)
+    res.json({ showstd });
+  } catch (err) {
+    next(err);
   }
-}
+};

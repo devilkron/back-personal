@@ -64,11 +64,32 @@ exports.showDtById = async (req,res, next )=> {
 
     const showDt = await db.student.findFirst({
       where:{
-        std_id:+std_id,
+        std_id: +std_id,
+      },
+      include:{
+        class: true,
+        major: true,
       }
     })
+    // console.log(std_id)
     res.json({showDt})
   }catch(err){
     next(err)
   }
+}
+exports.dashGet = async (req,res,next) => {
+  try{
+    const dashGet = await db.student.findMany({
+      include: {
+        class: true,
+        major: true
+      }
+    })
+    const count = dashGet.length;
+    // console.log(count)
+    res.json({count})
+  }catch(err){
+    next(err)
+  }
+  
 }

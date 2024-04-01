@@ -18,7 +18,7 @@ exports.register = async (req, res, next) => {
       user_lastname: lastname,
       user_email: email,
       user_password: hased,
-      user_role: "GUEST"
+      user_role: "STUDENT"
     };
     //                                db  / const db
     const rs = await db.user.create({ data: data });
@@ -46,6 +46,7 @@ exports.showSTDbyUser = async( req, res, next) => {
       include: {
         class: true,
         major: true,
+        gender: true
       },
       where:{
         user_id: req.user.user_id

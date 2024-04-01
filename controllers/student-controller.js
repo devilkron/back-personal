@@ -15,14 +15,21 @@ module.exports.getClass = async (req, res, next) => {
   const getC = await db.class.findMany();
   res.json({ getC });
 };
+exports.getGender = async (req, res, next) => {
+  try {
+    const getGen = await db.gender.findMany();
+    res.json({ getGen });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.getStudent = async (req, res, next) => {
   try {
     let skip = req.query.skip;
     const pageSize = 10;
     skip = skip === -10 ? 0 : +skip;
-    
-    
+
     const getS = await db.student.findMany({
       include: {
         class: true,
@@ -32,7 +39,7 @@ exports.getStudent = async (req, res, next) => {
       take: pageSize,
     });
 
-    res.json({getS});
+    res.json({ getS });
     // console.log(skip)
   } catch (err) {
     next(err);
@@ -71,6 +78,9 @@ exports.searchData = async (req, res, next) => {
 exports.updateData = async (req, res, next) => {
   const { std_id } = req.params;
   const {
+    std_yearIn,
+    std_school,
+    std_grade,
     std_identity,
     std_name,
     std_lastname,
@@ -81,6 +91,7 @@ exports.updateData = async (req, res, next) => {
     img_profile,
     majorId,
     classId,
+    gender_id,
   } = req.body;
 
   // console.log(majorId);
@@ -95,11 +106,19 @@ exports.updateData = async (req, res, next) => {
         class_id: +classId,
       },
     });
+    const getGen = await db.gender.findFirst({
+      where:{
+        gender_id: +gender_id
+      }
+    })
 
     // console.log(getMajor);
 
     const rs = await db.student.update({
       data: {
+        std_yearIn,
+        std_school,
+        std_grade,
         std_identity,
         std_name,
         std_lastname,
@@ -110,6 +129,7 @@ exports.updateData = async (req, res, next) => {
         img_profile,
         majorId: getMajor.major_id,
         classId: getClass.class_id,
+        gender_id:getGen.gender_id
       },
       where: { std_id: Number(std_id) },
     });
@@ -178,7 +198,7 @@ module.exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId, user_id, status } = req.body;
+    const { classId, majorId, gender_id, status } = req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {
@@ -196,6 +216,11 @@ module.exports.studentCreate = async (req, res, next) => {
         major: {
           connect: {
             major_id: Number(majorId),
+          },
+        },
+        gender: {
+          connect: {
+            gender_id: Number(gender_id),
           },
         },
         status,

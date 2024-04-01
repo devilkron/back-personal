@@ -7,9 +7,215 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum Nationality {
+    AFGHAN
+    ALBANIAN
+    ALGERIAN
+    ANDORRAN
+    ANGOLAN
+    ANTIGUAN_AND_BARBUDAN
+    ARGENTINE
+    ARMENIAN
+    AUSTRALIAN
+    AUSTRIAN
+    AZERBAIJANI
+    BAHAMIAN
+    BAHRAINI
+    BANGLADESHI
+    BARBADIAN
+    BELARUSIAN
+    BELGIAN
+    BELIZEAN
+    BENINESE
+    BHUTANESE
+    BOLIVIAN
+    BOSNIAN_OR_HERZEGOVINIAN
+    BOTSWANAN
+    BRAZILIAN
+    BRUNEIAN
+    BULGARIAN
+    BURKINABE
+    BURMESE
+    BURUNDIAN
+    CABO_VERDEAN
+    CAMBODIAN
+    CAMEROONIAN
+    CANADIAN
+    CENTRAL_AFRICAN
+    CHADIAN
+    CHILEAN
+    CHINESE
+    COLOMBIAN
+    COMORAN
+    CONGOLESE
+    COSTA_RICAN
+    CROATIAN
+    CUBAN
+    CYPRIOT
+    CZECH
+    DANISH
+    DJIBOUTIAN
+    DOMINICAN
+    DUTCH
+    EAST_TIMORESE
+    ECUADORIAN
+    EGYPTIAN
+    EQUATORIAL_GUINEAN
+    ERITREAN
+    ESTONIAN
+    ETHIOPIAN
+    FIJIAN
+    FILIPINO
+    FINNISH
+    FRENCH
+    GABONESE
+    GAMBIAN
+    GEORGIAN
+    GERMAN
+    GHANAIAN
+    GREEK
+    GRENADIAN
+    GUATEMALAN
+    GUINEAN
+    GUYANESE
+    HAITIAN
+    HONDURAN
+    HUNGARIAN
+    ICELANDIC
+    INDIAN
+    INDONESIAN
+    IRANIAN
+    IRAQI
+    IRISH
+    ISRAELI
+    ITALIAN
+    IVORIAN
+    JAMAICAN
+    JAPANESE
+    JORDANIAN
+    KAZAKHSTANI
+    KENYAN
+    KIRIBATI
+    KOREAN
+    KOSOVAR
+    KUWAITI
+    KYRGYZSTANI
+    LAO
+    LATVIAN
+    LEBANESE
+    LESOTHO
+    LIBERIAN
+    LIBYAN
+    LIECHTENSTEINER
+    LITHUANIAN
+    LUXEMBOURGER
+    MACEDONIAN
+    MALAGASY
+    MALAWIAN
+    MALAYSIAN
+    MALDIVIAN
+    MALIAN
+    MALTESE
+    MARSHALLESE
+    MAURITANIAN
+    MAURITIAN
+    MEXICAN
+    MICRONESIAN
+    MOLDOVAN
+    MONACAN
+    MONGOLIAN
+    MONTENEGRIN
+    MOROCCAN
+    MOSOTHO
+    MOTSWANA
+    MOZAMBICAN
+    NAMIBIAN
+    NAURUAN
+    NEPALESE
+    NEW_ZEALANDER
+    NICARAGUAN
+    NIGERIEN
+    NIGERIAN
+    NORTH_KOREAN
+    NORTHERN_IRISH
+    NORWEGIAN
+    OMANI
+    PAKISTANI
+    PALAUAN
+    PALESTINIAN
+    PANAMANIAN
+    PAPUA_NEW_GUINEAN
+    PARAGUAYAN
+    PERUVIAN
+    POLISH
+    PORTUGUESE
+    QATARI
+    ROMANIAN
+    RUSSIAN
+    RWANDAN
+    SAINT_LUCIAN
+    SALVADORAN
+    SAMMARINESE
+    SAMOAN
+    SAO_TOMEAN
+    SAUDI
+    SCOTTISH
+    SENEGALESE
+    SERBIAN
+    SEYCHELLOIS
+    SIERRA_LEONEAN
+    SINGAPOREAN
+    SLOVAK
+    SLOVENIAN
+    SOLOMON_ISLANDER
+    SOMALI
+    SOUTH_AFRICAN
+    SOUTH_KOREAN
+    SOUTH_SUDANESE
+    SPANISH
+    SRI_LANKAN
+    SUDANESE
+    SURINAMER
+    SWAZI
+    SWEDISH
+    SWISS
+    SYRIAN
+    TAIWANESE
+    TAJIK
+    TANZANIAN
+    THAI
+    TOGOLESE
+    TONGAN
+    TRINIDADIAN_OR_TOBAGONIAN
+    TUNISIAN
+    TURKISH
+    TUVALUAN
+    UGANDAN
+    UKRAINIAN
+    URUGUAYAN
+    UZBEK
+    VANUATUAN
+    VENEZUELAN
+    VIETNAMESE
+    WELSH
+    YEMENI
+    ZAMBIAN
+    ZIMBABWEAN
+    OTHER
+}
+
+enum Gender {
+    MR // นาย
+    BOY //เด็กชาย
+    MISS //นางสาว
+    MRS // นาง
+    GIRL //เด็กหญิง
+}
+
 enum Role {
     ADMIN
-    GUEST
+    STUDENT
+    PARENT
 }
 
 enum ctype {
@@ -31,6 +237,12 @@ enum statustype {
     REJECT
 }
 
+model gender {
+    gender_id   Int       @id @default(autoincrement())
+    gender_type Gender
+    student     student[]
+}
+
 model Class {
     class_id   Int       @id @default(autoincrement())
     class_type ctype
@@ -46,33 +258,40 @@ model major {
 }
 
 model student {
-    std_id       Int        @id @default(autoincrement())
-    std_name     String
-    std_lastname String
-    std_bd       DateTime   @db.Date
-    std_address  String
-    std_phone    String
-    std_email    String
-    img_profile  String
-    std_identity String
-    status       statustype @default(W8)
-    class        Class      @relation(fields: [classId], references: [class_id], onDelete: Cascade, onUpdate: Cascade)
-    classId      Int        @map("class_id")
-    major        major      @relation(fields: [majorId], references: [major_id], onDelete: Cascade, onUpdate: Cascade)
-    majorId      Int        @map("major_id")
-    user         user       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
-    user_id      Int
+    std_id          Int         @id @default(autoincrement())
+    std_name        String
+    std_lastname    String
+    std_nameEN      String
+    std_lastnameEN  String
+    std_nationality Nationality @default(THAI)
+    std_bd          DateTime    @db.Date
+    std_address     String
+    std_phone       String
+    std_email       String
+    img_profile     String
+    std_identity    String
+    std_yearIn      String
+    std_grade       String
+    std_school      String
+    gender          gender      @relation(fields: [gender_id], references: [gender_id])
+    status          statustype  @default(W8)
+    class           Class       @relation(fields: [classId], references: [class_id], onDelete: Cascade, onUpdate: Cascade)
+    classId         Int         @map("class_id")
+    major           major       @relation(fields: [majorId], references: [major_id], onDelete: Cascade, onUpdate: Cascade)
+    majorId         Int         @map("major_id")
+    user            user        @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+    user_id         Int
+    gender_id       Int
 }
 
-
-
 model user {
-    user_id             Int                   @id @default(autoincrement())
-    user_name           String
-    user_lastname       String
-    user_email          String
-    user_identity       String
-    user_password       String
-    user_role           Role                  @default(GUEST)
-    student             student[]
+    user_id       Int       @id @default(autoincrement())
+    user_gender   Gender
+    user_name     String
+    user_lastname String
+    user_email    String
+    user_identity String
+    user_password String
+    user_role     Role      @default(STUDENT)
+    student       student[]
 }

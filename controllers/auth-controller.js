@@ -73,7 +73,7 @@ exports.adminlogin = async (req, res, next) => {
     const user = await db.user.findFirstOrThrow({
       where: { user_email: email },
     });
-    if (user.user_role === "GUEST") {
+    if (user.user_role === "STUDENT" || "PARENT") {
       throw new Error("ไม่อนุญาต");
     }
     //check password

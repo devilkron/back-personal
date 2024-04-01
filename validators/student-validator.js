@@ -5,7 +5,10 @@ exports.student = joi.object({
     std_identity: joi.string().required(),
     
     std_name: joi.string().required(),
+    std_nameEN: joi.string().required(),
     std_lastname : joi.string().required(),
+    std_lastnameEN : joi.string().required(),
+    
     std_bd: joi.date().required(),
     std_address: joi.string().required(),
     std_phone : joi.string().required(),
@@ -18,5 +21,6 @@ exports.student = joi.object({
     classId : joi.number().required().strip(),
     majorId : joi.number().required().strip(),
     user_id : Joi.number().required().strip(),
-    gender_id: joi.number().required().strip()
+    gender_id: joi.number().required().strip(),
+    nation_id: joi.number().required().strip()
 })

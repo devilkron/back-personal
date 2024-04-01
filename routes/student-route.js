@@ -8,6 +8,7 @@ router.get("/enrollment", authenticate, studentController.getStudent);
 router.get("/major", studentController.getMajor);
 router.get("/class", studentController.getClass);
 router.get("/gender",studentController.getGender)
+router.get("/nation", studentController.getNationality)
 router.get("/me", authenticate,studentController.me);
 router.get("/search/",authenticate,studentController.searchData)
 

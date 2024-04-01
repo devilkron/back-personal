@@ -46,7 +46,8 @@ exports.showSTDbyUser = async( req, res, next) => {
       include: {
         class: true,
         major: true,
-        gender: true
+        gender: true,
+        nationality:true
       },
       where:{
         user_id: req.user.user_id
@@ -70,6 +71,8 @@ exports.showDtById = async (req,res, next )=> {
       include:{
         class: true,
         major: true,
+        gender:true,
+        nationality: true
       }
     })
     // console.log(std_id)

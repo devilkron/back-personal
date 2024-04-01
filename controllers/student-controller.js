@@ -23,6 +23,14 @@ exports.getGender = async (req, res, next) => {
     next(err);
   }
 };
+exports.getNationality = async (req,res, next) => {
+  try{
+    const getNation = await db.nationality.findMany()
+    res.json({getNation})
+  }catch(err){
+    next(err)
+  }
+}
 
 exports.getStudent = async (req, res, next) => {
   try {
@@ -92,6 +100,7 @@ exports.updateData = async (req, res, next) => {
     majorId,
     classId,
     gender_id,
+    nation_id
   } = req.body;
 
   // console.log(majorId);
@@ -109,6 +118,11 @@ exports.updateData = async (req, res, next) => {
     const getGen = await db.gender.findFirst({
       where:{
         gender_id: +gender_id
+      }
+    })
+    const getNation = await db.nationality.findFirst({
+      where: {
+        nation_id : +nation_id
       }
     })
 
@@ -129,7 +143,8 @@ exports.updateData = async (req, res, next) => {
         img_profile,
         majorId: getMajor.major_id,
         classId: getClass.class_id,
-        gender_id:getGen.gender_id
+        gender_id:getGen.gender_id,
+        nation_id: getNation.nation_id
       },
       where: { std_id: Number(std_id) },
     });
@@ -198,7 +213,7 @@ module.exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId, gender_id, status } = req.body;
+    const { classId, majorId, gender_id,nation_id, status } = req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {
@@ -221,6 +236,11 @@ module.exports.studentCreate = async (req, res, next) => {
         gender: {
           connect: {
             gender_id: Number(gender_id),
+          },
+        },
+        nationality: {
+          connect: {
+            nation_id: Number(nation_id),
           },
         },
         status,

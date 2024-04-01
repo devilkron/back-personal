@@ -11,7 +11,7 @@ const userData = [
     user_identity: "1234567891234",
     user_password: password,
     user_role: "ADMIN",
-    user_gender: "MR"
+    user_gender: "MR",
   },
   {
     user_name: "group",
@@ -20,7 +20,7 @@ const userData = [
     user_identity: "8975542343460",
     user_password: password,
     user_role: "STUDENT",
-    user_gender: "BOY"
+    user_gender: "BOY",
   },
   {
     user_name: "Parent",
@@ -29,7 +29,7 @@ const userData = [
     user_identity: "1234576902346",
     user_password: password,
     user_role: "PARENT",
-    user_gender: "MISS"
+    user_gender: "MISS",
   },
 ];
 
@@ -48,11 +48,23 @@ const genderData = [
   { gender_type: "BOY" },
   { gender_type: "GIRL" },
 ];
+const nationalityData = [
+  {nation_name: "THAI"},
+  {nation_name: "LAO"},
+  {nation_name: "JAPANESE"},
+  {nation_name: "US"},
+  {nation_name: "CANADIAN"},
+  {nation_name: "KOREAN"},
+  {nation_name: "VIETNAMESE"},
+  {nation_name: "UK"},
+  {nation_name: "GERMAN"},
+  {nation_name: "DUTCH"},
+  {nation_name: "OTHER"},
+];
 
 const run = async () => {
   // await prisma.todo.deleteMany({});
   // await prisma.user.deleteMany({});
-
   await prisma.gender.createMany({
     data: genderData,
   });
@@ -66,6 +78,9 @@ const run = async () => {
   await prisma.class.createMany({
     data: classData,
   });
+  await prisma.nationality.createMany({
+    data:nationalityData
+  })
 };
 
 run();

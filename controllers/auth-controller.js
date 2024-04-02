@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../models/db");
 
 exports.register = async (req, res, next) => {
-  const { identity, name, lastname, email, password, confirmPassword } =
+  const { identity, name, lastname,gender_id, email, password, confirmPassword,role } =
     req.body;
   try {
     if (confirmPassword !== password) {
@@ -17,9 +17,14 @@ exports.register = async (req, res, next) => {
       user_identity: identity,
       user_name: name,
       user_lastname: lastname,
+      user_role : role,
       user_email: email,
       user_password: hased,
-      user_role: "GUEST",
+      gender: {
+        connect: {
+          gender_id: Number(gender_id),
+        },
+      },
     };
     //                                db  / const db
     const rs = await db.user.create({ data: data });
@@ -73,7 +78,7 @@ exports.adminlogin = async (req, res, next) => {
     const user = await db.user.findFirstOrThrow({
       where: { user_email: email },
     });
-    if (user.user_role === "STUDENT" || "PARENT") {
+    if (user.user_role === "STUDENT" && "PARENT") {
       throw new Error("ไม่อนุญาต");
     }
     //check password
@@ -94,7 +99,8 @@ exports.adminlogin = async (req, res, next) => {
   }
 };
 
-exports.GETME = (req, res, next) => {
+exports.GETME = async(req, res, next) => {
+ 
   res.json(req.user);
 };
 

@@ -58,6 +58,7 @@ model gender {
     gender_id   Int       @id @default(autoincrement())
     gender_type Gender
     student     student[]
+    user        user[]
 }
 
 model nationality {
@@ -109,13 +110,14 @@ model student {
 }
 
 model user {
-    user_id       Int       @id @default(autoincrement())
-    user_gender   Gender
-    user_name     String
-    user_lastname String
-    user_email    String
-    user_identity String
-    user_password String
-    user_role     Role      @default(STUDENT)
-    student       student[]
+    user_id         Int       @id @default(autoincrement())
+    gender          gender    @relation(fields: [gender_id], references: [gender_id],onDelete: Cascade, onUpdate: Cascade)
+    user_name       String
+    user_lastname   String
+    user_email      String
+    user_identity   String
+    user_password   String
+    user_role       Role      @default(STUDENT)
+    student         student[]
+    gender_id Int
 }

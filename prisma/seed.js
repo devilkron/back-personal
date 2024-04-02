@@ -11,7 +11,7 @@ const userData = [
     user_identity: "1234567891234",
     user_password: password,
     user_role: "ADMIN",
-    user_gender: "MR",
+    gender_id: 1,
   },
   {
     user_name: "group",
@@ -20,7 +20,7 @@ const userData = [
     user_identity: "8975542343460",
     user_password: password,
     user_role: "STUDENT",
-    user_gender: "BOY",
+    gender_id: 4,
   },
   {
     user_name: "Parent",
@@ -29,7 +29,7 @@ const userData = [
     user_identity: "1234576902346",
     user_password: password,
     user_role: "PARENT",
-    user_gender: "MISS",
+    gender_id : 3,
   },
 ];
 

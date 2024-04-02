@@ -22,7 +22,7 @@ module.exports = async (req, res, next) => {
         // console.log(token);
       
       
-        const user = await db.user.findFirst({ where: { user_id: payload.id } });
+        const user = await db.user.findFirst({ where: { user_id: payload.id }, include: {gender: true} });
         // console.log(user)
 
 

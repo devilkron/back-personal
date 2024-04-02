@@ -42,6 +42,8 @@ exports.getStudent = async (req, res, next) => {
       include: {
         class: true,
         major: true,
+        gender: true,
+        nationality: true,
       },
       skip: skip,
       take: pageSize,
@@ -75,6 +77,8 @@ exports.searchData = async (req, res, next) => {
       include: {
         class: true,
         major: true,
+        gender: true,
+        nationality: true
       },
     });
     res.json({ getD });

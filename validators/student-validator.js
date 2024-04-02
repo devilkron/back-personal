@@ -8,7 +8,6 @@ exports.student = joi.object({
     std_nameEN: joi.string().required(),
     std_lastname : joi.string().required(),
     std_lastnameEN : joi.string().required(),
-    
     std_bd: joi.date().required(),
     std_address: joi.string().required(),
     std_phone : joi.string().required(),

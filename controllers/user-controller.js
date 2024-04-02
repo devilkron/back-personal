@@ -2,6 +2,14 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const db = require("../models/db");
 
+exports.getGender = async (req, res, next) => {
+  try {
+    const getGen = await db.gender.findMany();
+    res.json({ getGen });
+  } catch (err) {
+    next(err);
+  }
+};
 exports.register = async (req, res, next) => {
   const { identity, name,lastname ,email ,password ,confirmPassword} = req.body;
   try {

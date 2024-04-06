@@ -23,14 +23,14 @@ exports.getGender = async (req, res, next) => {
     next(err);
   }
 };
-exports.getNationality = async (req,res, next) => {
-  try{
-    const getNation = await db.nationality.findMany()
-    res.json({getNation})
-  }catch(err){
-    next(err)
+exports.getNationality = async (req, res, next) => {
+  try {
+    const getNation = await db.nationality.findMany();
+    res.json({ getNation });
+  } catch (err) {
+    next(err);
   }
-}
+};
 
 exports.getStudent = async (req, res, next) => {
   try {
@@ -78,10 +78,60 @@ exports.searchData = async (req, res, next) => {
         class: true,
         major: true,
         gender: true,
-        nationality: true
+        nationality: true,
       },
     });
     res.json({ getD });
+    // console.log(getD);
+  } catch (err) {
+    next(err);
+  }
+};
+exports.searchYear = async (req, res, next) => {
+  try {
+    const year = req.query.year;
+
+    // console.log(name);
+    // const lastname = req.query.lastname;
+    const getDY = await db.student.findMany({
+      where: {
+        std_yearIn: {
+          contains: year,
+        },
+      },
+      include: {
+        class: true,
+        major: true,
+        gender: true,
+        nationality: true,
+      },
+    });
+    res.json({ getDY });
+    // console.log(getD);
+  } catch (err) {
+    next(err);
+  }
+};
+exports.searchClass = async (req, res, next) => {
+  try {
+    const cls = req.query.cls;
+
+    // console.log(name);
+    // const lastname = req.query.lastname;
+    const getDC = await db.student.findMany({
+      where: {
+        classId: {
+          equals: 1,
+        },
+      },
+      include: {
+        class: true,
+        major: true,
+        gender: true,
+        nationality: true,
+      },
+    });
+    res.json({ getDC });
     // console.log(getD);
   } catch (err) {
     next(err);
@@ -104,7 +154,7 @@ exports.updateData = async (req, res, next) => {
     majorId,
     classId,
     gender_id,
-    nation_id
+    nation_id,
   } = req.body;
 
   // console.log(majorId);
@@ -120,15 +170,15 @@ exports.updateData = async (req, res, next) => {
       },
     });
     const getGen = await db.gender.findFirst({
-      where:{
-        gender_id: +gender_id
-      }
-    })
+      where: {
+        gender_id: +gender_id,
+      },
+    });
     const getNation = await db.nationality.findFirst({
       where: {
-        nation_id : +nation_id
-      }
-    })
+        nation_id: +nation_id,
+      },
+    });
 
     // console.log(getMajor);
 
@@ -147,8 +197,8 @@ exports.updateData = async (req, res, next) => {
         img_profile,
         majorId: getMajor.major_id,
         classId: getClass.class_id,
-        gender_id:getGen.gender_id,
-        nation_id: getNation.nation_id
+        gender_id: getGen.gender_id,
+        nation_id: getNation.nation_id,
       },
       where: { std_id: Number(std_id) },
     });
@@ -217,7 +267,7 @@ module.exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId, gender_id,nation_id, status } = req.body;
+    const { classId, majorId, gender_id, nation_id, status } = req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {

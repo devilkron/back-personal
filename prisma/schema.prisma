@@ -40,13 +40,7 @@ enum ctype {
     SECONDARY2
 }
 
-enum mtype {
-    MATHSCI
-    ARTMATH
-    ARTENG
-    ARTSOC //ศิลป์-สังคม
-    ARTFREE // ศิลป์-ทั่วไป
-}
+
 
 enum statustype {
     W8
@@ -59,6 +53,12 @@ model gender {
     gender_type Gender
     student     student[]
     user        user[]
+}
+
+model religion {
+    religion_id   Int       @id @default(autoincrement())
+    religion_name String
+    student       student[]
 }
 
 model nationality {
@@ -77,7 +77,7 @@ model Class {
 
 model major {
     major_id   Int       @id @default(autoincrement())
-    major_type mtype
+    major_type String
     student    student[]
 }
 
@@ -96,7 +96,10 @@ model student {
     std_yearIn     String
     std_grade      String
     std_school     String
+    religion_other String
+    nation_other   String
     nationality    nationality @relation(fields: [nation_id], references: [nation_id], onDelete: Cascade, onUpdate: Cascade)
+    religion       religion    @relation(fields: [religion_id], references: [religion_id], onDelete: Cascade, onUpdate: Cascade)
     gender         gender      @relation(fields: [gender_id], references: [gender_id], onDelete: Cascade, onUpdate: Cascade)
     status         statustype  @default(W8)
     class          Class       @relation(fields: [classId], references: [class_id], onDelete: Cascade, onUpdate: Cascade)
@@ -107,17 +110,18 @@ model student {
     user_id        Int
     gender_id      Int
     nation_id      Int
+    religion_id    Int
 }
 
 model user {
-    user_id         Int       @id @default(autoincrement())
-    gender          gender    @relation(fields: [gender_id], references: [gender_id],onDelete: Cascade, onUpdate: Cascade)
-    user_name       String
-    user_lastname   String
-    user_email      String
-    user_identity   String
-    user_password   String
-    user_role       Role      @default(STUDENT)
-    student         student[]
-    gender_id Int
+    user_id       Int       @id @default(autoincrement())
+    gender        gender    @relation(fields: [gender_id], references: [gender_id], onDelete: Cascade, onUpdate: Cascade)
+    user_name     String
+    user_lastname String
+    user_email    String
+    user_identity String
+    user_password String
+    user_role     Role      @default(STUDENT)
+    student       student[]
+    gender_id     Int
 }

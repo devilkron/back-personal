@@ -31,6 +31,14 @@ exports.getNationality = async (req, res, next) => {
     next(err);
   }
 };
+exports.getReligion = async (req, res, next) => {
+  try {
+    const getReligion = await db.religion.findMany();
+    res.json({ getReligion });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.getStudent = async (req, res, next) => {
   try {
@@ -44,6 +52,7 @@ exports.getStudent = async (req, res, next) => {
         major: true,
         gender: true,
         nationality: true,
+        religion: true,
       },
       skip: skip,
       take: pageSize,
@@ -79,6 +88,7 @@ exports.searchData = async (req, res, next) => {
         major: true,
         gender: true,
         nationality: true,
+        religion: true,
       },
     });
     res.json({ getD });
@@ -104,6 +114,7 @@ exports.searchYear = async (req, res, next) => {
         major: true,
         gender: true,
         nationality: true,
+        religion: true,
       },
     });
     res.json({ getDY });
@@ -129,6 +140,7 @@ exports.searchClass = async (req, res, next) => {
         major: true,
         gender: true,
         nationality: true,
+        religion: true,
       },
     });
     res.json({ getDC });
@@ -151,10 +163,13 @@ exports.updateData = async (req, res, next) => {
     std_phone,
     std_email,
     img_profile,
+    nation_other,
+    religion_other,
     majorId,
     classId,
     gender_id,
     nation_id,
+    religion_id,
   } = req.body;
 
   // console.log(majorId);
@@ -179,6 +194,11 @@ exports.updateData = async (req, res, next) => {
         nation_id: +nation_id,
       },
     });
+    const getReligion = await db.religion.findFirst({
+      where: {
+        religion_id: +religion_id,
+      },
+    });
 
     // console.log(getMajor);
 
@@ -195,10 +215,13 @@ exports.updateData = async (req, res, next) => {
         std_phone,
         std_email,
         img_profile,
+        nation_other,
+        religion_other,
         majorId: getMajor.major_id,
         classId: getClass.class_id,
         gender_id: getGen.gender_id,
         nation_id: getNation.nation_id,
+        religion: getReligion.religion_id,
       },
       where: { std_id: Number(std_id) },
     });
@@ -258,8 +281,9 @@ exports.delData = async (req, res, next) => {
   }
 };
 
-module.exports.studentCreate = async (req, res, next) => {
+exports.studentCreate = async (req, res, next) => {
   try {
+    // console.log("1234")
     const value = await student.validateAsync(req.body);
 
     const imagePromise = req.files.map((file) => {
@@ -267,7 +291,8 @@ module.exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId, gender_id, nation_id, status } = req.body;
+    const { classId, majorId, gender_id, nation_id, status, religion_id } =
+      req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {
@@ -295,6 +320,11 @@ module.exports.studentCreate = async (req, res, next) => {
         nationality: {
           connect: {
             nation_id: Number(nation_id),
+          },
+        },
+        religion: {
+          connect: {
+            religion_id: Number(religion_id),
           },
         },
         status,
@@ -325,3 +355,49 @@ exports.showSTDbyUser = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.MajorAdd = async (req, res, next) => {
+  const { major_type } = req.body;
+  try {
+    const data = {
+      major_type: major_type,
+    };
+    const rs = await db.major.create({ data: data });
+    // console.log(rs)
+    res.json({ message: "เพิ่มสายการเรียนเรียบร้อย" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.UpdateMajor = async (req, res, next) => {
+  const {major_id} = req.params;
+  const {
+    major_type
+  } = req.body
+  try{
+    const rs = await db.major.update({
+      data: {
+        major_type,
+      },
+      where: {major_id: Number(major_id)}
+    });
+    res.json({message: "แก้ไขเรียบร้อย", result: rs})
+  }catch(err){
+    next(err)
+  }
+};
+
+exports.Delmajor = async(req, res, next) => {
+  try{
+    const {major_id} = req.params;
+    const Delm = await prisma.major.delete({
+      where: {
+        major_id: +major_id
+      },
+    });
+    res.json({result: Delm})
+  }catch(err){
+    next(err)
+  }
+}

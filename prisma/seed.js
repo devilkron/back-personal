@@ -61,10 +61,18 @@ const nationalityData = [
   {nation_name: "DUTCH"},
   {nation_name: "OTHER"},
 ];
+const religionData = [
+  {religion_name: "buddhism"},
+  {religion_name: "Christian"},
+  {religion_name: "OTHER"}
+]
 
 const run = async () => {
   // await prisma.todo.deleteMany({});
   // await prisma.user.deleteMany({});
+  await prisma.religion.createMany({
+    data: religionData,
+  })
   await prisma.gender.createMany({
     data: genderData,
   });

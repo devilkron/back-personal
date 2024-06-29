@@ -16,7 +16,6 @@ app.use(express.json());
 // service
 app.use("/auth", authRoute);
 app.use("/user", userRoute);
-
 app.use("/student", studentRoute);
 
 // notFound

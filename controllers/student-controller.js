@@ -73,15 +73,40 @@ exports.me = (req, res, next) => {
 
 exports.searchData = async (req, res, next) => {
   try {
-    const name = req.query.name;
-
-    // console.log(name);
+    const name = req.query.name || "";
+    const grade = req.query.grade || "";
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+// console.log(grade)
+    const search = decodeURIComponent(name);
     // const lastname = req.query.lastname;
     const getD = await db.student.findMany({
       where: {
-        std_name: {
-          contains: name,
+        AND: [{
+          OR: [
+            {
+              std_name: {
+                contains: name,
+              },
+            },
+            {
+              std_lastname: {
+                contains: name,
+              },
+            },
+            {
+              std_yearIn: {
+                contains: name,
+              },
+            },
+            
+              
+            
+          ],
         },
+        grade !== "" ? {class: {class_type: grade}} : {}
+      ],
       },
       include: {
         class: true,
@@ -90,8 +115,13 @@ exports.searchData = async (req, res, next) => {
         nationality: true,
         religion: true,
       },
+      take: limit,
+      skip: skip
     });
-    res.json({ getD });
+    if(getD.length === 0) {
+      return createError(400, "ไม่พบข้อมูล")
+    }
+    res.json({ getD, skip, limit, page });
     // console.log(getD);
   } catch (err) {
     next(err);
@@ -371,33 +401,31 @@ exports.MajorAdd = async (req, res, next) => {
 };
 
 exports.UpdateMajor = async (req, res, next) => {
-  const {major_id} = req.params;
-  const {
-    major_type
-  } = req.body
-  try{
+  const { major_id } = req.params;
+  const { major_type } = req.body;
+  try {
     const rs = await db.major.update({
       data: {
         major_type,
       },
-      where: {major_id: Number(major_id)}
+      where: { major_id: Number(major_id) },
     });
-    res.json({message: "แก้ไขเรียบร้อย", result: rs})
-  }catch(err){
-    next(err)
+    res.json({ message: "แก้ไขเรียบร้อย", result: rs });
+  } catch (err) {
+    next(err);
   }
 };
 
-exports.Delmajor = async(req, res, next) => {
-  try{
-    const {major_id} = req.params;
+exports.Delmajor = async (req, res, next) => {
+  try {
+    const { major_id } = req.params;
     const Delm = await prisma.major.delete({
       where: {
-        major_id: +major_id
+        major_id: +major_id,
       },
     });
-    res.json({result: Delm})
-  }catch(err){
-    next(err)
+    res.json({ result: Delm });
+  } catch (err) {
+    next(err);
   }
-}
+};

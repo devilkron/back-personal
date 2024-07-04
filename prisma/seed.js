@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
+const { date } = require("joi");
 
 const password = bcrypt.hashSync("1234");
 const userData = [
@@ -48,28 +49,30 @@ const genderData = [
   { gender_type: "BOY" },
   { gender_type: "GIRL" },
 ];
+//สัญชาติ
 const nationalityData = [
   {nation_name: "THAI"},
-  {nation_name: "LAO"},
-  {nation_name: "JAPANESE"},
-  {nation_name: "US"},
-  {nation_name: "CANADIAN"},
-  {nation_name: "KOREAN"},
-  {nation_name: "VIETNAMESE"},
-  {nation_name: "UK"},
-  {nation_name: "GERMAN"},
-  {nation_name: "DUTCH"},
   {nation_name: "OTHER"},
 ];
+//ศาสนา
 const religionData = [
   {religion_name: "buddhism"},
   {religion_name: "Christian"},
+  {religion_name: "Islam"},
   {religion_name: "OTHER"}
+]
+//เชื้อชาติ
+const ethicityData = [
+  {eth_name: "THAI"},
+  {eth_name: "OTHER"}
 ]
 
 const run = async () => {
   // await prisma.todo.deleteMany({});
   // await prisma.user.deleteMany({});
+  await prisma.ethicity.createMany({
+    data: ethicityData
+  })
   await prisma.religion.createMany({
     data: religionData,
   })

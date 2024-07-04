@@ -6,6 +6,7 @@ const { student } = require("../validators/student-validator");
 const prisma = require("../models/db");
 const cloudUpload = require("../utils/cloudupload");
 const createError = require("../utils/createError");
+const { connect } = require("../routes/student-route");
 
 module.exports.getMajor = async (req, res, next) => {
   const getM = await db.major.findMany();
@@ -39,6 +40,15 @@ exports.getReligion = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getETH = async (req,res, next) => {
+  try{
+    const getETH = await db.ethicity.findMany();
+    res.json({getETH})
+  }catch(err){
+    next(err)
+  }
+}
 
 exports.getStudent = async (req, res, next) => {
   try {
@@ -87,17 +97,22 @@ exports.searchData = async (req, res, next) => {
           OR: [
             {
               std_name: {
-                contains: name,
+                contains: search,
               },
             },
             {
               std_lastname: {
-                contains: name,
+                contains: search,
               },
             },
             {
               std_yearIn: {
-                contains: name,
+                contains: search,
+              },
+            },
+            {
+              std_school: {
+                contains: search
               },
             },
             
@@ -105,7 +120,7 @@ exports.searchData = async (req, res, next) => {
             
           ],
         },
-        grade !== "" ? {class: {class_type: grade}} : {}
+        grade !== "" ? {class: {class_id: +grade}} : {}
       ],
       },
       include: {
@@ -321,7 +336,7 @@ exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId, gender_id, nation_id, status, religion_id } =
+    const { classId, majorId, gender_id, nation_id, status, religion_id,eth_id,std_email } =
       req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
@@ -357,10 +372,17 @@ exports.studentCreate = async (req, res, next) => {
             religion_id: Number(religion_id),
           },
         },
+        ethicity: {
+          connect: {
+            eth_id: Number(eth_id)
+          },
+        },
         status,
 
         img_profile: imageUrlArray[0],
+        std_email: std_email || "null",
       },
+      
     });
     res.json({ stdCreate, Message: "สมัครสอบเสร็จสิ้น" });
   } catch (err) {

@@ -10,6 +10,7 @@ router.get("/class", studentController.getClass);
 router.get("/gender",studentController.getGender)
 router.get("/nation", studentController.getNationality)
 router.get("/religion", studentController.getReligion)
+router.get("/ethicity", studentController.getETH)
 router.get("/me", authenticate,studentController.me);
 router.get("/search/std*",authenticate,studentController.searchData)
 router.get("/year/",authenticate,studentController.searchYear)

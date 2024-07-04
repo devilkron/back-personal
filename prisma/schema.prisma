@@ -7,27 +7,13 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-enum Nationality {
-    THAI
-    LAO
-    JAPANESE
-    US
-    CANADIAN
-    KOREAN
-    VIETNAMESE
-    UK
-    GERMAN
-    DUTCH
-    OTHER
-}
-
-enum Gender {
-    MR // นาย
-    BOY //เด็กชาย
-    MISS //นางสาว
-    MRS // นาง
-    GIRL //เด็กหญิง
-}
+// enum Gender {
+//     MR // นาย
+//     BOY //เด็กชาย
+//     MISS //นางสาว
+//     MRS // นาง
+//     GIRL //เด็กหญิง
+// }
 
 enum Role {
     ADMIN
@@ -40,8 +26,6 @@ enum ctype {
     SECONDARY2
 }
 
-
-
 enum statustype {
     W8
     AGREE
@@ -50,7 +34,7 @@ enum statustype {
 
 model gender {
     gender_id   Int       @id @default(autoincrement())
-    gender_type Gender
+    gender_type String
     student     student[]
     user        user[]
 }
@@ -61,9 +45,15 @@ model religion {
     student       student[]
 }
 
+model ethicity {
+    eth_id   Int       @id @default(autoincrement())
+    eth_name String
+    student  student[]
+}
+
 model nationality {
-    nation_id   Int         @id @default(autoincrement())
-    nation_name Nationality
+    nation_id   Int       @id @default(autoincrement())
+    nation_name String
     student     student[]
 }
 
@@ -90,7 +80,7 @@ model student {
     std_bd         DateTime    @db.Date
     std_address    String
     std_phone      String
-    std_email      String
+    std_email      String?
     img_profile    String
     std_identity   String
     std_yearIn     String
@@ -98,8 +88,10 @@ model student {
     std_school     String
     religion_other String
     nation_other   String
+    eth_other      String
     nationality    nationality @relation(fields: [nation_id], references: [nation_id], onDelete: Cascade, onUpdate: Cascade)
     religion       religion    @relation(fields: [religion_id], references: [religion_id], onDelete: Cascade, onUpdate: Cascade)
+    ethicity       ethicity    @relation(fields: [eth_id], references: [eth_id], onDelete: Cascade, onUpdate: Cascade)
     gender         gender      @relation(fields: [gender_id], references: [gender_id], onDelete: Cascade, onUpdate: Cascade)
     status         statustype  @default(W8)
     class          Class       @relation(fields: [classId], references: [class_id], onDelete: Cascade, onUpdate: Cascade)
@@ -111,6 +103,7 @@ model student {
     gender_id      Int
     nation_id      Int
     religion_id    Int
+    eth_id         Int
 }
 
 model user {

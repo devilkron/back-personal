@@ -71,6 +71,13 @@ model major {
     student    student[]
 }
 
+model Province {
+    prov_id       Int       @id @default(autoincrement())
+    prov_name     String
+    prov_thainame String
+    student       student[]
+}
+
 model student {
     std_id         Int         @id @default(autoincrement())
     std_name       String
@@ -79,6 +86,7 @@ model student {
     std_lastnameEN String
     std_bd         DateTime    @db.Date
     std_address    String
+    Province       Province    @relation(fields: [prov_id], references: [prov_id], onDelete: Cascade, onUpdate: Cascade)
     std_phone      String
     std_email      String?
     img_profile    String
@@ -104,6 +112,7 @@ model student {
     nation_id      Int
     religion_id    Int
     eth_id         Int
+    prov_id        Int
 }
 
 model user {

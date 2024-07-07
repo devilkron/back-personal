@@ -6,7 +6,6 @@ const { student } = require("../validators/student-validator");
 const prisma = require("../models/db");
 const cloudUpload = require("../utils/cloudupload");
 const createError = require("../utils/createError");
-const { connect } = require("../routes/student-route");
 
 module.exports.getMajor = async (req, res, next) => {
   const getM = await db.major.findMany();
@@ -41,14 +40,27 @@ exports.getReligion = async (req, res, next) => {
   }
 };
 
-exports.getETH = async (req,res, next) => {
-  try{
+exports.getETH = async (req, res, next) => {
+  try {
     const getETH = await db.ethicity.findMany();
-    res.json({getETH})
-  }catch(err){
-    next(err)
+    res.json({ getETH });
+  } catch (err) {
+    next(err);
   }
-}
+};
+
+exports.getProvince = async (req, res, next) => {
+  try {
+    const getProv = await db.province.findMany({
+      orderBy: {
+        prov_thainame: "asc",
+      },
+    });
+    res.json({ getProv });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.getStudent = async (req, res, next) => {
   try {
@@ -88,40 +100,38 @@ exports.searchData = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * limit;
-// console.log(grade)
+    // console.log(grade)
     const search = decodeURIComponent(name);
     // const lastname = req.query.lastname;
     const getD = await db.student.findMany({
       where: {
-        AND: [{
-          OR: [
-            {
-              std_name: {
-                contains: search,
+        AND: [
+          {
+            OR: [
+              {
+                std_name: {
+                  contains: search,
+                },
               },
-            },
-            {
-              std_lastname: {
-                contains: search,
+              {
+                std_lastname: {
+                  contains: search,
+                },
               },
-            },
-            {
-              std_yearIn: {
-                contains: search,
+              {
+                std_yearIn: {
+                  contains: search,
+                },
               },
-            },
-            {
-              std_school: {
-                contains: search
+              {
+                std_school: {
+                  contains: search,
+                },
               },
-            },
-            
-              
-            
-          ],
-        },
-        grade !== "" ? {class: {class_id: +grade}} : {}
-      ],
+            ],
+          },
+          grade !== "" ? { class: { class_id: +grade } } : {},
+        ],
       },
       include: {
         class: true,
@@ -129,12 +139,13 @@ exports.searchData = async (req, res, next) => {
         gender: true,
         nationality: true,
         religion: true,
+        province: true,
       },
       take: limit,
-      skip: skip
+      skip: skip,
     });
-    if(getD.length === 0) {
-      return createError(400, "ไม่พบข้อมูล")
+    if (getD.length === 0) {
+      return createError(400, "ไม่พบข้อมูล");
     }
     res.json({ getD, skip, limit, page });
     // console.log(getD);
@@ -142,58 +153,58 @@ exports.searchData = async (req, res, next) => {
     next(err);
   }
 };
-exports.searchYear = async (req, res, next) => {
-  try {
-    const year = req.query.year;
+// exports.searchYear = async (req, res, next) => {
+//   try {
+//     const year = req.query.year;
 
-    // console.log(name);
-    // const lastname = req.query.lastname;
-    const getDY = await db.student.findMany({
-      where: {
-        std_yearIn: {
-          contains: year,
-        },
-      },
-      include: {
-        class: true,
-        major: true,
-        gender: true,
-        nationality: true,
-        religion: true,
-      },
-    });
-    res.json({ getDY });
-    // console.log(getD);
-  } catch (err) {
-    next(err);
-  }
-};
-exports.searchClass = async (req, res, next) => {
-  try {
-    const cls = req.query.cls;
+//     // console.log(name);
+//     // const lastname = req.query.lastname;
+//     const getDY = await db.student.findMany({
+//       where: {
+//         std_yearIn: {
+//           contains: year,
+//         },
+//       },
+//       include: {
+//         class: true,
+//         major: true,
+//         gender: true,
+//         nationality: true,
+//         religion: true,
+//       },
+//     });
+//     res.json({ getDY });
+//     // console.log(getD);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+// exports.searchClass = async (req, res, next) => {
+//   try {
+//     const cls = req.query.cls;
 
-    // console.log(name);
-    // const lastname = req.query.lastname;
-    const getDC = await db.student.findMany({
-      where: {
-        classId: {
-          equals: 1,
-        },
-      },
-      include: {
-        class: true,
-        major: true,
-        gender: true,
-        nationality: true,
-        religion: true,
-      },
-    });
-    res.json({ getDC });
-    // console.log(getD);
-  } catch (err) {
-    next(err);
-  }
-};
+//     // console.log(name);
+//     // const lastname = req.query.lastname;
+//     const getDC = await db.student.findMany({
+//       where: {
+//         classId: {
+//           equals: 1,
+//         },
+//       },
+//       include: {
+//         class: true,
+//         major: true,
+//         gender: true,
+//         nationality: true,
+//         religion: true,
+//       },
+//     });
+//     res.json({ getDC });
+//     // console.log(getD);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 exports.updateData = async (req, res, next) => {
   const { std_id } = req.params;
   const {
@@ -215,6 +226,8 @@ exports.updateData = async (req, res, next) => {
     gender_id,
     nation_id,
     religion_id,
+    eth_id,
+    prov_id,
   } = req.body;
 
   // console.log(majorId);
@@ -244,6 +257,16 @@ exports.updateData = async (req, res, next) => {
         religion_id: +religion_id,
       },
     });
+    const getProv = await db.province.findFirst({
+      where: {
+        prov_id: +prov_id,
+      },
+    });
+    const getETH = await db.ethicity.findFirst({
+      where: {
+        eth_id: +eth_id,
+      },
+    });
 
     // console.log(getMajor);
 
@@ -267,6 +290,8 @@ exports.updateData = async (req, res, next) => {
         gender_id: getGen.gender_id,
         nation_id: getNation.nation_id,
         religion: getReligion.religion_id,
+        eth_id: getETH.eth_id,
+        prov_id: getProv.prov_id
       },
       where: { std_id: Number(std_id) },
     });
@@ -336,8 +361,17 @@ exports.studentCreate = async (req, res, next) => {
     });
 
     const imageUrlArray = await Promise.all(imagePromise);
-    const { classId, majorId, gender_id, nation_id, status, religion_id,eth_id,std_email } =
-      req.body;
+    const {
+      classId,
+      majorId,
+      gender_id,
+      nation_id,
+      status,
+      religion_id,
+      eth_id,
+      std_email,
+      prov_id,
+    } = req.body;
     // console.log("Received status:", status);
     const stdCreate = await prisma.student.create({
       data: {
@@ -374,7 +408,12 @@ exports.studentCreate = async (req, res, next) => {
         },
         ethicity: {
           connect: {
-            eth_id: Number(eth_id)
+            eth_id: Number(eth_id),
+          },
+        },
+        Province: {
+          connect:{
+            prov_id: Number(prov_id),
           },
         },
         status,
@@ -382,7 +421,6 @@ exports.studentCreate = async (req, res, next) => {
         img_profile: imageUrlArray[0],
         std_email: std_email || "null",
       },
-      
     });
     res.json({ stdCreate, Message: "สมัครสอบเสร็จสิ้น" });
   } catch (err) {

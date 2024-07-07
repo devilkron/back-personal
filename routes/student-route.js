@@ -11,10 +11,11 @@ router.get("/gender",studentController.getGender)
 router.get("/nation", studentController.getNationality)
 router.get("/religion", studentController.getReligion)
 router.get("/ethicity", studentController.getETH)
+router.get("/provinces", authenticate, studentController.getProvince)
 router.get("/me", authenticate,studentController.me);
 router.get("/search/std*",authenticate,studentController.searchData)
-router.get("/year/",authenticate,studentController.searchYear)
-router.get("/cls/",authenticate,studentController.searchClass)
+// router.get("/year/",authenticate,studentController.searchYear)
+// router.get("/cls/",authenticate,studentController.searchClass)
 
 router.post("/add", upload.array("image", 2),authenticate, studentController.studentCreate);
 router.post("/addmajor",authenticate, studentController.MajorAdd)

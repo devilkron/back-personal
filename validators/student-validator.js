@@ -26,6 +26,7 @@ exports.student = joi.object({
     religion_id: Joi.number().required().strip(),
     gender_id: joi.number().required().strip(),
     nation_id: joi.number().required().strip(),
-    eth_id: joi.number().required().strip()
+    eth_id: joi.number().required().strip(),
+    prov_id: Joi.number().required().strip()
     
 })

@@ -230,45 +230,28 @@ exports.updateData = async (req, res, next) => {
     prov_id,
   } = req.body;
 
-  // console.log(majorId);
   try {
     const getMajor = await db.major.findFirst({
-      where: {
-        major_id: +majorId,
-      },
+      where: { major_id: +majorId },
     });
     const getClass = await db.class.findFirst({
-      where: {
-        class_id: +classId,
-      },
+      where: { class_id: +classId },
     });
     const getGen = await db.gender.findFirst({
-      where: {
-        gender_id: +gender_id,
-      },
+      where: { gender_id: +gender_id },
     });
     const getNation = await db.nationality.findFirst({
-      where: {
-        nation_id: +nation_id,
-      },
+      where: { nation_id: +nation_id },
     });
     const getReligion = await db.religion.findFirst({
-      where: {
-        religion_id: +religion_id,
-      },
+      where: { religion_id: +religion_id },
     });
     const getProv = await db.province.findFirst({
-      where: {
-        prov_id: +prov_id,
-      },
+      where: { prov_id: +prov_id },
     });
     const getETH = await db.ethicity.findFirst({
-      where: {
-        eth_id: +eth_id,
-      },
+      where: { eth_id: +eth_id },
     });
-
-    // console.log(getMajor);
 
     const rs = await db.student.update({
       data: {
@@ -285,22 +268,24 @@ exports.updateData = async (req, res, next) => {
         img_profile,
         nation_other,
         religion_other,
-        majorId: getMajor.major_id,
-        classId: getClass.class_id,
-        gender_id: getGen.gender_id,
-        nation_id: getNation.nation_id,
-        religion: getReligion.religion_id,
-        eth_id: getETH.eth_id,
-        prov_id: getProv.prov_id
+        major: { connect: { major_id: getMajor.major_id } },
+        class: { connect: { class_id: getClass.class_id } },
+        gender: { connect: { gender_id: getGen.gender_id } },
+        nationality: { connect: { nation_id: getNation.nation_id } },
+        religion: { connect: { religion_id: getReligion.religion_id } },
+        ethicity: { connect: { eth_id: getETH.eth_id } },
+        Province: { connect: { prov_id: getProv.prov_id } },
       },
       where: { std_id: Number(std_id) },
     });
+
     res.json({ message: "UPDATE", result: rs });
   } catch (err) {
     next(err);
     console.log(err);
   }
 };
+
 
 exports.updateStatus = async (req, res, next) => {
   const { std_id } = req.params;

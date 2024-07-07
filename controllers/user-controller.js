@@ -55,6 +55,7 @@ exports.showSTDbyUser = async (req, res, next) => {
         major: true,
         gender: true,
         nationality: true,
+        ethicity: true,
       },
       where: {
         user_id: req.user.user_id,

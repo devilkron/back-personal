@@ -139,7 +139,7 @@ exports.searchData = async (req, res, next) => {
         gender: true,
         nationality: true,
         religion: true,
-        province: true,
+        Province: true,
       },
       take: limit,
       skip: skip,
@@ -436,6 +436,11 @@ exports.MajorAdd = async (req, res, next) => {
   try {
     const data = {
       major_type: major_type,
+      user: {
+        connect: {
+          user_id: req.user.user_id,
+        },
+      },
     };
     const rs = await db.major.create({ data: data });
     // console.log(rs)

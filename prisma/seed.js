@@ -36,11 +36,10 @@ const userData = [
 ];
 
 const majorData = [
-  { major_type: "MATHSCI" },
-  { major_type: "ARTMATH" },
-  { major_type: "ARTENG" },
-  { major_type: "ARTSOC" },
-  { major_type: "ARTFREE" },
+  { major_type: "วิทย์คณิต" , user_id: 1},
+  { major_type: "ศิลป์คำนวณ", user_id: 1 },
+  { major_type: "ศิลป์ภาษา", user_id: 1 },
+  
 ];
 const classData = [{ class_type: "SECONDARY1" }, { class_type: "SECONDARY2" }];
 const genderData = [

@@ -69,6 +69,8 @@ model major {
     major_id   Int       @id @default(autoincrement())
     major_type String
     student    student[]
+    user       user      @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+    user_id    Int
 }
 
 model Province {
@@ -126,4 +128,5 @@ model user {
     user_role     Role      @default(STUDENT)
     student       student[]
     gender_id     Int
+    major         major[]
 }

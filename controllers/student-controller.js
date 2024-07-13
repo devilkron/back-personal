@@ -8,7 +8,11 @@ const cloudUpload = require("../utils/cloudupload");
 const createError = require("../utils/createError");
 
 module.exports.getMajor = async (req, res, next) => {
-  const getM = await db.major.findMany();
+  const getM = await db.major.findMany({
+    include: {
+      user: true,
+    },
+  });
   res.json({ getM });
 };
 module.exports.getClass = async (req, res, next) => {
@@ -286,7 +290,6 @@ exports.updateData = async (req, res, next) => {
   }
 };
 
-
 exports.updateStatus = async (req, res, next) => {
   const { std_id } = req.params;
   const { status } = req.body;
@@ -397,7 +400,7 @@ exports.studentCreate = async (req, res, next) => {
           },
         },
         Province: {
-          connect:{
+          connect: {
             prov_id: Number(prov_id),
           },
         },
@@ -433,26 +436,40 @@ exports.showSTDbyUser = async (req, res, next) => {
 
 exports.MajorAdd = async (req, res, next) => {
   const { major_type } = req.body;
-  try {
-    const data = {
-      major_type: major_type,
-      user: {
-        connect: {
-          user_id: req.user.user_id,
+  const duplicatemajor = await db.major.findFirst({
+    where: { major_type },
+  });
+  if (duplicatemajor) {
+    return res.status(400).json({ message: "มีสาขานี้อยู่แล้ว" });
+  } 
+  else {
+    try {
+      const data = {
+        major_type: major_type,
+        user: {
+          connect: {
+            user_id: req.user.user_id,
+          },
         },
-      },
-    };
-    const rs = await db.major.create({ data: data });
-    // console.log(rs)
-    res.json({ message: "เพิ่มสายการเรียนเรียบร้อย" });
-  } catch (err) {
-    next(err);
+      };
+      const rs = await db.major.create({ data: data });
+      // console.log(rs)
+      res.json({ message: "เพิ่มสายการเรียนเรียบร้อย" });
+    } catch (err) {
+      next(err);
+    }
   }
 };
 
 exports.UpdateMajor = async (req, res, next) => {
   const { major_id } = req.params;
   const { major_type } = req.body;
+  const duplicatemajor = await db.major.findFirst({
+    where: { major_type },
+  });
+  if (duplicatemajor) {
+    return res.status(400).json({ message: "มีสาขานี้อยู่แล้ว" });
+  }
   try {
     const rs = await db.major.update({
       data: {
